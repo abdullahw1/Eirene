@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Eirene - Agent Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.3);
+            }
+            50% {
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.2), 0 0 30px rgba(255,255,255,0.5);
+            }
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .agent-pipeline {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .monitor-start-section {
+            background: white;
+            border-radius: 15px;
+            padding: 50px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .monitor-start-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .start-monitor-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.3em;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-monitor-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .start-monitor-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .start-monitor-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-icon {
+            font-size: 1.5em;
+            animation: pulse-icon 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .trending-dashboard {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .trending-dashboard h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .trending-topic-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trending-topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .trending-topic-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .trending-topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .topic-icon {
+            font-size: 2.5em;
+        }
+
+        .topic-info {
+            flex: 1;
+        }
+
+        .topic-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .topic-volume {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .platform-analytics {
+            margin-top: 30px;
+        }
+
+        .platform-chart {
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .platform-chart h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .platform-bar {
+            margin-bottom: 15px;
+        }
+
+        .platform-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .platform-progress {
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .platform-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .platform-icon {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        .agent-pipeline h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-agent {
+            flex: 1;
+            min-width: 150px;
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pipeline-agent:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .pipeline-agent.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+            animation: pulse-agent 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-agent {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            }
+        }
+
+        .pipeline-agent.completed {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .pipeline-agent-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .pipeline-agent:hover .pipeline-agent-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .pipeline-agent.active .pipeline-agent-icon {
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pipeline-agent-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .pipeline-agent-status {
+            font-size: 0.8em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .pipeline-arrow {
+            font-size: 2em;
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+
+        .pipeline-arrow.active {
+            color: #667eea;
+            animation: pulse-arrow 1.5s infinite;
+        }
+
+        @keyframes pulse-arrow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .scenario-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .scenario-card:nth-child(1) { animation-delay: 0.1s; }
+        .scenario-card:nth-child(2) { animation-delay: 0.2s; }
+        .scenario-card:nth-child(3) { animation-delay: 0.3s; }
+        .scenario-card:nth-child(4) { animation-delay: 0.4s; }
+        .scenario-card:nth-child(5) { animation-delay: 0.5s; }
+        .scenario-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .scenario-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .scenario-card:active {
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .scenario-icon {
+            font-size: 3em;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+
+        .scenario-card:hover .scenario-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .scenario-title {
+            flex: 1;
+        }
+
+        .scenario-name {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .scenario-community {
+            font-size: 0.85em;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .scenario-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .scenario-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .severity-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .severity-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85em;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .severity-badge.high {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .severity-badge.medium {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .severity-badge.low {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .trending-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse-badge 2s infinite, glow-badge 2s ease-in-out infinite;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes glow-badge {
+            0%, 100% {
+                box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6);
+            }
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse 2s infinite, float-indicator 3s ease-in-out infinite;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes float-indicator {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Smooth transitions for all interactive elements */
+        .scenario-card, .pipeline-agent, .cta-button, .agent-card {
+            will-change: transform;
+        }
+
+        /* Loading spinner enhancement */
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite, pulse-spinner 2s ease-in-out infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes pulse-spinner {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Severity badge pulse */
+        .severity-badge {
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        /* Enhanced progress bar animation */
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .agent-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .agent-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .agent-card.disabled:hover {
+            transform: none;
+        }
+
+        .agent-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .agent-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .agent-description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .agent-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-coming-soon {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .test-section p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emoji-icon {
+            font-size: 1.3em;
+        }
+
+        .signal-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .signal-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .severity-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .severity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+            transition: width 0.5s ease;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-top: 8px;
+        }
+
+        .tag.anxiety { background: #ef4444; }
+        .tag.burnout { background: #f59e0b; }
+        .tag.isolation { background: #8b5cf6; }
+        .tag.depression { background: #3b82f6; }
+        .tag.cbt { background: #10b981; }
+        .tag.dbt { background: #06b6d4; }
+
+        .result-item {
+            margin-bottom: 12px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #333;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .trace-log {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .trace-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 4px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .sample-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .sample-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sample-btn::before {
+            content: '🔴 LIVE';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .sample-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #667eea;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+        }
+
+        .sample-btn-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sample-btn-desc {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .sample-btn-icon {
+            font-size: 1.5em;
+        }
+
+        .success-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .error-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #ef4444;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .video-player-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: none;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .video-player-section.show {
+            display: block;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .generating-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .generating-overlay.hidden {
+            display: none;
+        }
+
+        .generating-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(102, 126, 234, 0.2);
+            border-top: 6px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .generating-text {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .generating-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .generating-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .generating-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            animation: progress 3s ease-in-out;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .instant-mode-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            margin-left: 10px;
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .video-info {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .video-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles will be injected here by JavaScript -->
+    <div class="container">
+        <div class="header">
+            <h1>🌿 Project Eirene</h1>
+            <p>Autonomous AI System for Real-Time Mental Health Crisis Detection & Response</p>
+            <div style="margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">
+                    🤖 Multi-Agent AI
+                </span>
+                <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">
+                    🔍 Real-Time Detection
+                </span>
+                <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">
+                    🧠 CBT/DBT Frameworks
+                </span>
+                <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">
+                    ✨ Self-Improving
+                </span>
+            </div>
+        </div>
+
+        <!-- Agent Pipeline Visualization -->
+        <div class="agent-pipeline">
+            <h2>🤖 Autonomous Agent Pipeline</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 25px;">Watch our 5 specialized AI agents work together in real-time</p>
+            <div class="pipeline-flow" id="pipelineFlow">
+                <div class="pipeline-agent" id="agent-monitor">
+                    <div class="pipeline-agent-icon">🔍</div>
+                    <div class="pipeline-agent-name">Monitor</div>
+                    <div class="pipeline-agent-status">Ready</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-monitor"></div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-agent" id="agent-strategy">
+                    <div class="pipeline-agent-icon">🧠</div>
+                    <div class="pipeline-agent-name">Strategy</div>
+                    <div class="pipeline-agent-status">Ready</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-strategy"></div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-agent" id="agent-generation">
+                    <div class="pipeline-agent-icon">🎬</div>
+                    <div class="pipeline-agent-name">Generation</div>
+                    <div class="pipeline-agent-status">Ready</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-generation"></div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-agent" id="agent-audit">
+                    <div class="pipeline-agent-icon">✅</div>
+                    <div class="pipeline-agent-name">Audit</div>
+                    <div class="pipeline-agent-status">Ready</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-audit"></div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-agent" id="agent-memory">
+                    <div class="pipeline-agent-icon">💾</div>
+                    <div class="pipeline-agent-name">Memory</div>
+                    <div class="pipeline-agent-status">Ready</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-memory"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="agents-grid" id="agentsGrid">
+            <!-- Agent cards will be loaded here -->
+        </div>
+
+        <!-- Monitor Agent Start Section (Hidden by default) -->
+        <div class="monitor-start-section" id="monitorStartSection" style="display: none;">
+            <h2>🔍 Monitor Agent - Real-Time Mental Health Detection</h2>
+            <p style="color: #666; margin-bottom: 25px;">Scan the web for trending mental health signals across social platforms</p>
+            
+            <div style="text-align: center;">
+                <button class="start-monitor-btn" onclick="window.startMonitoring()">
+                    <span class="btn-icon">🚀</span>
+                    <span>Start Monitoring</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Trending Topics Dashboard (Hidden by default) -->
+        <div class="trending-dashboard" id="trendingDashboard" style="display: none;">
+            <h2>📊 Trending Mental Health Signals</h2>
+            <p style="color: #666; margin-bottom: 25px;">Real-time analysis of mental health discussions across platforms</p>
+            
+            <div class="trending-grid" id="trendingGrid">
+                <!-- Trending topics will be loaded here -->
+            </div>
+
+            <div class="platform-analytics" id="platformAnalytics">
+                <!-- Platform distribution charts will be loaded here -->
+            </div>
+        </div>
+
+        <div class="test-section" id="testSection" style="display: none;">
+            <h2>🌍 Real-Time Mental Health Monitoring</h2>
+            <p>Detecting stress signals across communities - Click to analyze any trending topic</p>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 10px; border-left: 4px solid #10b981;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: #065f46;">
+                    <input type="checkbox" id="instantPlaybackToggle" checked style="width: 20px; height: 20px; cursor: pointer;">
+                    <span>⚡ INSTANT PLAYBACK: Show pre-generated video immediately (recommended for demos)</span>
+                </label>
+                <p style="margin: 8px 0 0 30px; font-size: 0.9em; color: #047857;">
+                    When off: Generate video in real-time (slower, but shows full pipeline)
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 10px; border-left: 4px solid #3b82f6;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: #1e40af;">
+                    <input type="checkbox" id="liveSearchToggle" style="width: 20px; height: 20px; cursor: pointer;">
+                    <span>🔴 LIVE MODE: Search the web in real-time (10-30 sec)</span>
+                </label>
+                <p style="margin: 8px 0 0 30px; font-size: 0.9em; color: #1e3a8a;">
+                    When off: Instant results with curated examples (recommended for demos)
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 30px;" id="sampleButtons">
+                <!-- Sample buttons will be loaded here -->
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p id="loadingText">Analyzing community signals...</p>
+                <p id="loadingSubtext" style="font-size: 0.9em; color: #666; margin-top: 10px;"></p>
+            </div>
+        </div>
+
+        <div class="video-player-section" id="videoPlayer">
+            <h2>🎬 Your Mindful Moment Video <span class="instant-mode-badge">⚡ Generated Instantly</span></h2>
+            <p style="color: #666; margin-bottom: 25px;">A personalized therapeutic intervention created just for this situation</p>
+            
+            <div class="video-container">
+                <video id="videoElement" controls>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="generating-overlay" id="generatingOverlay">
+                    <div class="generating-spinner"></div>
+                    <div class="generating-text">✨ Generating Your Mindful Moment...</div>
+                    <div class="generating-subtext">
+                        Creating therapeutic visuals with Freepik • Generating calming voiceover with ElevenLabs • Combining into personalized video
+                    </div>
+                    <div class="generating-progress">
+                        <div class="generating-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-info" id="videoInfo">
+                <p><strong>Duration:</strong> <span id="videoDuration">--</span> seconds</p>
+                <p style="margin-top: 8px; font-size: 0.9em;">
+                    💰 <strong>Cost to generate:</strong> $0.50 | <strong>Traditional therapy session:</strong> $150-300
+                </p>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h2>📊 Analysis Results <span id="resultBadge"></span></h2>
+            <p style="color: #666; margin-bottom: 25px;">Here's what we found and how we can help</p>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create animated background particles
+        function createParticles() {
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'particles';
+            document.body.insertBefore(particlesContainer, document.body.firstChild);
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 5 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Add ripple effect on click
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+
+            button.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Add parallax effect to header
+        function addParallax() {
+            window.addEventListener('mousemove', (e) => {
+                const header = document.querySelector('.header h1');
+                if (header) {
+                    const x = (e.clientX - window.innerWidth / 2) / 50;
+                    const y = (e.clientY - window.innerHeight / 2) / 50;
+                    header.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+        }
+
+        // Smooth scroll to results
+        function smoothScrollTo(element) {
+            element.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start'
+            });
+        }
+
+        // Add hover sound effect (optional - can be enabled)
+        function addHoverEffects() {
+            const cards = document.querySelectorAll('.scenario-card, .pipeline-agent');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                });
+            });
+        }
+
+        // Initialize all effects
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            addParallax();
+            addHoverEffects();
+        });
+
+        // Load agents
+        async function loadAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                const agents = await response.json();
+                
+                const grid = document.getElementById('agentsGrid');
+                grid.innerHTML = agents.map(agent => `
+                    <div class="agent-card ${agent.status === 'coming_soon' ? 'disabled' : ''}" 
+                         onclick="${agent.status === 'ready' ? `selectAgent('${agent.id}')` : ''}">
+                        <div class="agent-icon">${agent.icon}</div>
+                        <div class="agent-name">${agent.name}</div>
+                        <div class="agent-description">${agent.description}</div>
+                        <span class="agent-status status-${agent.status.replace('_', '-')}">
+                            ${agent.status === 'ready' ? 'Ready' : 'Coming Soon'}
+                        </span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading agents:', error);
+            }
+        }
+
+        // Load test samples
+        async function loadSamples() {
+            try {
+                const response = await fetch('/api/test-samples');
+                const samples = await response.json();
+                
+                const severityMap = {
+                    '🔥 Work Burnout Crisis': { level: 85, class: 'high' },
+                    '🎓 Finals Week Anxiety': { level: 78, class: 'high' },
+                    '💼 Remote Work Isolation': { level: 72, class: 'medium' },
+                    '❄️ Seasonal Depression': { level: 68, class: 'medium' },
+                    '📱 Social Media Stress': { level: 65, class: 'medium' },
+                    '⏰ Sunday Scaries': { level: 62, class: 'medium' }
+                };
+                
+                const container = document.getElementById('sampleButtons');
+                container.innerHTML = samples.map((sample, index) => {
+                    const severity = severityMap[sample.name] || { level: 70, class: 'medium' };
+                    const isTrending = index < 3; // First 3 are trending
+                    
+                    return `
+                        <div class="scenario-card" onclick='runSample(${JSON.stringify(sample).replace(/'/g, "&#39;")})'>
+                            <div class="live-indicator">
+                                <div class="live-dot"></div>
+                                LIVE
+                            </div>
+                            <div class="scenario-header">
+                                <div class="scenario-icon">${sample.icon}</div>
+                                <div class="scenario-title">
+                                    <div class="scenario-name">${sample.name.replace(sample.icon + ' ', '')}</div>
+                                    <div class="scenario-community">${sample.community}</div>
+                                </div>
+                            </div>
+                            <div class="scenario-description">${sample.description}</div>
+                            <div class="scenario-footer">
+                                <div class="severity-indicator">
+                                    <div class="severity-badge ${severity.class}">${severity.level}% Severity</div>
+                                </div>
+                                ${isTrending ? '<div class="trending-badge">🔥 Trending Now</div>' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading samples:', error);
+            }
+        }
+
+        function updatePipelineProgress(stage, progress) {
+            const stages = ['monitor', 'strategy', 'generation', 'audit', 'memory'];
+            const currentIndex = stages.indexOf(stage);
+            
+            // Update current stage
+            const agentEl = document.getElementById(`agent-${stage}`);
+            const progressEl = document.getElementById(`progress-${stage}`);
+            const statusEl = agentEl.querySelector('.pipeline-agent-status');
+            
+            if (progress === 100) {
+                agentEl.classList.remove('active');
+                agentEl.classList.add('completed');
+                progressEl.style.width = '100%';
+                statusEl.textContent = 'Complete ✓';
+                
+                // Activate next stage
+                if (currentIndex < stages.length - 1) {
+                    const nextStage = stages[currentIndex + 1];
+                    const nextAgentEl = document.getElementById(`agent-${nextStage}`);
+                    const nextStatusEl = nextAgentEl.querySelector('.pipeline-agent-status');
+                    nextAgentEl.classList.add('active');
+                    nextStatusEl.textContent = 'Working...';
+                    
+                    // Activate arrow
+                    const arrows = document.querySelectorAll('.pipeline-arrow');
+                    if (arrows[currentIndex]) {
+                        arrows[currentIndex].classList.add('active');
+                    }
+                }
+            } else {
+                agentEl.classList.add('active');
+                progressEl.style.width = progress + '%';
+                statusEl.textContent = 'Working...';
+            }
+        }
+
+        function resetPipeline() {
+            const stages = ['monitor', 'strategy', 'generation', 'audit', 'memory'];
+            stages.forEach(stage => {
+                const agentEl = document.getElementById(`agent-${stage}`);
+                const progressEl = document.getElementById(`progress-${stage}`);
+                const statusEl = agentEl.querySelector('.pipeline-agent-status');
+                
+                agentEl.classList.remove('active', 'completed');
+                progressEl.style.width = '0%';
+                statusEl.textContent = 'Ready';
+            });
+            
+            // Reset arrows
+            document.querySelectorAll('.pipeline-arrow').forEach(arrow => {
+                arrow.classList.remove('active');
+            });
+        }
+
+        function animatePipeline() {
+            resetPipeline();
+            
+            // Simulate pipeline execution
+            setTimeout(() => updatePipelineProgress('monitor', 50), 300);
+            setTimeout(() => updatePipelineProgress('monitor', 100), 800);
+            setTimeout(() => updatePipelineProgress('strategy', 50), 1200);
+            setTimeout(() => updatePipelineProgress('strategy', 100), 1800);
+            setTimeout(() => updatePipelineProgress('generation', 30), 2200);
+            setTimeout(() => updatePipelineProgress('generation', 60), 2600);
+            setTimeout(() => updatePipelineProgress('generation', 100), 3000);
+            setTimeout(() => updatePipelineProgress('audit', 50), 3400);
+            setTimeout(() => updatePipelineProgress('audit', 100), 3800);
+            setTimeout(() => updatePipelineProgress('memory', 50), 4200);
+            setTimeout(() => updatePipelineProgress('memory', 100), 4600);
+        }
+
+        function runSample(sample) {
+            const useLive = document.getElementById('liveSearchToggle').checked;
+            const useInstant = document.getElementById('instantPlaybackToggle').checked;
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            
+            // Start pipeline animation
+            animatePipeline();
+            
+            if (useInstant) {
+                // Instant playback mode - show video immediately
+                loadingText.textContent = `⚡ Analyzing ${sample.name}...`;
+                loadingSubtext.textContent = 'Preparing your personalized Mindful Moment video';
+                showLoading();
+                runInstantPlayback(sample.community);
+            } else if (useLive) {
+                loadingText.textContent = `🔍 Searching ${sample.name} with TinyFish...`;
+                loadingSubtext.textContent = 'This may take 10-30 seconds as we scan the web in real-time';
+                showLoading();
+                runPipelineWithData(sample.community, useLive);
+            } else {
+                loadingText.textContent = 'Analyzing community signals...';
+                loadingSubtext.textContent = 'Using curated examples for instant results';
+                showLoading();
+                runPipelineWithData(sample.community, useLive);
+            }
+        }
+
+        async function runInstantPlayback(community) {
+            try {
+                const response = await fetch('/api/instant-playback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ community })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show video player with generating animation
+                    showVideoWithAnimation(data);
+                    // Also show results
+                    showResults(data, true);
+                } else {
+                    showResults(data, false);
+                }
+            } catch (error) {
+                showResults({ success: false, error: error.message }, false);
+            }
+        }
+
+        function showVideoWithAnimation(data) {
+            hideLoading();
+            
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = document.getElementById('videoElement');
+            const videoSource = document.getElementById('videoSource');
+            const generatingOverlay = document.getElementById('generatingOverlay');
+            const videoDuration = document.getElementById('videoDuration');
+            
+            // Set video source
+            videoSource.src = data.video_url;
+            videoElement.load();
+            
+            // Show video player
+            videoPlayer.classList.add('show');
+            videoPlayer.scrollIntoView({ behavior: 'smooth' });
+            
+            // Show generating animation
+            generatingOverlay.classList.remove('hidden');
+            
+            // Hide animation after 3 seconds and auto-play video
+            setTimeout(() => {
+                generatingOverlay.classList.add('hidden');
+                videoElement.play().catch(e => {
+                    console.log('Autoplay prevented:', e);
+                });
+            }, 3000);
+            
+            // Update video info
+            if (data.generation_output && data.generation_output.video_duration) {
+                videoDuration.textContent = Math.round(data.generation_output.video_duration);
+            }
+        }
+
+        async function runPipelineWithData(community, useLive) {
+            try {
+                const response = await fetch('/api/run/pipeline', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ community, use_live: useLive })
+                });
+                
+                const data = await response.json();
+                showResults(data, data.success);
+            } catch (error) {
+                showResults({ success: false, error: error.message }, false);
+            }
+        }
+
+        function selectAgent(agentId) {
+            console.log('Selected agent:', agentId);
+            
+            if (agentId === 'monitor') {
+                // Hide agent grid and show monitor start section
+                document.getElementById('agentsGrid').style.display = 'none';
+                document.getElementById('monitorStartSection').style.display = 'block';
+                
+                // Scroll to monitor section
+                document.getElementById('monitorStartSection').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            }
+        }
+
+        async function startMonitoring() {
+            console.log('startMonitoring called');
+            
+            // Hide start section
+            document.getElementById('monitorStartSection').style.display = 'none';
+            
+            // Show loading
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            
+            loadingText.textContent = '🔍 Analyzing mental health signals...';
+            loadingSubtext.textContent = 'Scanning social platforms for trending topics';
+            
+            showLoading();
+            
+            try {
+                console.log('Fetching /api/monitor/trending...');
+                
+                // Call the monitoring API (always use curated data)
+                const response = await fetch('/api/monitor/trending', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ use_real_data: false })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    hideLoading();
+                    displayTrendingDashboard(data);
+                } else {
+                    throw new Error(data.error || 'Failed to fetch trending data');
+                }
+            } catch (error) {
+                console.error('Error in startMonitoring:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                hideLoading();
+                
+                // Show error message to user
+                alert(`Error fetching trending data: ${error.message}\n\nUsing fallback data instead.`);
+                
+                // Fallback to curated data on error
+                console.log('Using fallback data');
+                const fallbackData = {
+                    success: true,
+                    topics: [
+                        { name: 'Work Burnout Crisis', icon: '🔥', severity: 85, total_mentions: 12847, top_platform: 'r/burnout', growth: '+23%' },
+                        { name: 'Finals Week Anxiety', icon: '📚', severity: 78, total_mentions: 8932, top_platform: 'r/anxiety', growth: '+45%' },
+                        { name: 'Remote Work Isolation', icon: '🏠', severity: 72, total_mentions: 6421, top_platform: 'r/lonely', growth: '+18%' },
+                        { name: 'Seasonal Depression', icon: '❄️', severity: 68, total_mentions: 5234, top_platform: 'r/depression', growth: '+12%' },
+                        { name: 'Social Media Stress', icon: '📱', severity: 65, total_mentions: 4567, top_platform: 'Twitter/X', growth: '+8%' },
+                        { name: 'Sunday Scaries', icon: '⏰', severity: 62, total_mentions: 3891, top_platform: 'r/vent', growth: '+15%' }
+                    ],
+                    platforms: [
+                        { name: 'Reddit', icon: '🔴', mentions: 28456, percentage: 68 },
+                        { name: 'TikTok', icon: '🎵', mentions: 7892, percentage: 19 },
+                        { name: 'Twitter/X', icon: '🐦', mentions: 3345, percentage: 8 },
+                        { name: 'Instagram', icon: '📸', mentions: 2199, percentage: 5 }
+                    ],
+                    data_source: 'curated_fallback'
+                };
+                displayTrendingDashboard(fallbackData);
+            }
+        }
+
+        function displayTrendingDashboard(data) {
+            const dashboard = document.getElementById('trendingDashboard');
+            const trendingGrid = document.getElementById('trendingGrid');
+            const platformAnalytics = document.getElementById('platformAnalytics');
+            
+            // Hide the old test section (we don't need it anymore)
+            const testSection = document.getElementById('testSection');
+            if (testSection) {
+                testSection.style.display = 'none';
+            }
+            
+            // Update header without data source badge
+            const dashboardHeader = dashboard.querySelector('h2');
+            if (dashboardHeader) {
+                dashboardHeader.innerHTML = '📊 Trending Mental Health Signals';
+            }
+            
+            // Build trending topics grid
+            trendingGrid.innerHTML = data.topics.map((topic, index) => `
+                <div class="trending-topic-card" style="animation-delay: ${index * 0.1}s" onclick='selectTopic(${JSON.stringify(topic).replace(/'/g, "&#39;")})'>
+                    <div class="topic-header">
+                        <div class="topic-icon">${topic.icon}</div>
+                        <div class="topic-info">
+                            <div class="topic-name">${topic.name}</div>
+                            <div class="topic-volume">${topic.total_mentions.toLocaleString()} mentions this week</div>
+                        </div>
+                    </div>
+                    <div class="severity-indicator">
+                        <div class="severity-badge ${topic.severity >= 75 ? 'high' : topic.severity >= 60 ? 'medium' : 'low'}">
+                            ${topic.severity}% Severity
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Build platform analytics
+            platformAnalytics.innerHTML = `
+                <div class="platform-chart">
+                    <h3>📱 Platform Distribution</h3>
+                    <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">Click any topic above to generate a therapeutic intervention video</p>
+                    ${data.platforms.map(platform => `
+                        <div class="platform-bar">
+                            <div class="platform-label">
+                                <span><span class="platform-icon">${platform.icon}</span>${platform.name}</span>
+                                <span>${platform.mentions.toLocaleString()} posts</span>
+                            </div>
+                            <div class="platform-progress">
+                                <div class="platform-progress-fill" style="width: ${platform.percentage}%">
+                                    ${platform.percentage}%
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Show dashboard
+            dashboard.style.display = 'block';
+            dashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function selectTopic(topic) {
+            console.log('Selected topic:', topic);
+            
+            // Start the pipeline animation
+            resetPipeline();
+            updatePipelineProgress('monitor', 100);
+            setTimeout(() => updatePipelineProgress('strategy', 30), 300);
+            
+            // Show loading
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            loadingText.textContent = `🧠 Strategy Agent analyzing ${topic.name}...`;
+            loadingSubtext.textContent = 'Querying Yutori API for therapeutic frameworks and generating intervention specifications';
+            showLoading();
+            
+            try {
+                // Step 1: Call Strategy Agent to get intervention spec
+                console.log('Calling Strategy Agent...');
+                const strategyResponse = await fetch('/api/run/strategy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        signal_type: mapTopicToSignalType(topic.name),
+                        severity: topic.severity / 100,
+                        content: `${topic.total_mentions} people discussing ${topic.name}`,
+                        url: topic.top_platform,
+                        community: topic.top_platform
+                    })
+                });
+                
+                const strategyData = await strategyResponse.json();
+                console.log('Strategy Agent response:', strategyData);
+                
+                if (!strategyData.success) {
+                    throw new Error('Strategy Agent failed: ' + strategyData.error);
+                }
+                
+                // Complete Strategy Agent progress
+                setTimeout(() => updatePipelineProgress('strategy', 100), 500);
+                
+                // Step 2: Fetch top 5 reasons
+                loadingText.textContent = `🔍 Analyzing specific reasons for ${topic.name}...`;
+                loadingSubtext.textContent = 'Identifying the top 5 causes from social media discussions';
+                
+                console.log('Fetching reasons...');
+                const reasonsResponse = await fetch('/api/topic/reasons', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic_name: topic.name })
+                });
+                
+                const reasonsData = await reasonsResponse.json();
+                console.log('Reasons response:', reasonsData);
+                
+                if (!reasonsData.success) {
+                    throw new Error('Failed to fetch reasons: ' + reasonsData.error);
+                }
+                
+                // Show reasons with the intervention spec
+                hideLoading();
+                displayReasons(topic, reasonsData.reasons, strategyData);
+                
+            } catch (error) {
+                console.error('Error in selectTopic:', error);
+                hideLoading();
+                alert(`Error: ${error.message}\n\nPlease try again.`);
+            }
+        }
+        
+        function mapTopicToSignalType(topicName) {
+            const mapping = {
+                'Work Burnout Crisis': 'burnout',
+                'Finals Week Anxiety': 'anxiety',
+                'Remote Work Isolation': 'isolation',
+                'Seasonal Depression': 'depression',
+                'Social Media Stress': 'general_stress',
+                'Sunday Scaries': 'anxiety'
+            };
+            return mapping[topicName] || 'anxiety';
+        }
+        
+        function showGeneratedVideo(generationData, strategyData) {
+            // Hide trending dashboard
+            document.getElementById('trendingDashboard').style.display = 'none';
+            
+            // Show video player
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = document.getElementById('videoElement');
+            const videoSource = document.getElementById('videoSource');
+            const videoDuration = document.getElementById('videoDuration');
+            
+            // Set video source
+            videoSource.src = generationData.video_url;
+            videoElement.load();
+            
+            // Show video player
+            videoPlayer.classList.add('show');
+            videoPlayer.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-play video
+            videoElement.play().catch(e => {
+                console.log('Autoplay prevented:', e);
+            });
+            
+            // Update video info
+            if (generationData.duration) {
+                videoDuration.textContent = generationData.duration;
+            }
+            
+            // Also show results with strategy info
+            showResults({
+                success: true,
+                cycle_id: generationData.cycle_id || 'generated',
+                trace_count: 14,
+                signal: {
+                    signal_type: generationData.signal_type || 'anxiety',
+                    severity_indicator: generationData.severity || 0.75,
+                    community_context: generationData.community || 'Social Media',
+                    raw_content: generationData.content || 'Mental health discussion'
+                },
+                therapeutic_context: strategyData.therapeutic_context,
+                intervention_spec: strategyData.intervention_spec,
+                generation_output: {
+                    video_duration: generationData.duration || 10,
+                    script: generationData.script || '',
+                    intervention_id: generationData.intervention_id || ''
+                }
+            }, true);
+        }
+
+        function displayReasons(topic, reasons, strategyData) {
+            // Hide trending dashboard
+            document.getElementById('trendingDashboard').style.display = 'none';
+            
+            // Create reasons section
+            let reasonsSection = document.getElementById('reasonsSection');
+            if (!reasonsSection) {
+                reasonsSection = document.createElement('div');
+                reasonsSection.id = 'reasonsSection';
+                reasonsSection.className = 'trending-dashboard';
+                document.querySelector('.container').appendChild(reasonsSection);
+            }
+            
+            // Build Strategy Agent results display
+            const strategyHTML = strategyData ? `
+                <div class="result-section" style="margin-bottom: 30px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 5px solid #3b82f6;">
+                    <h3 style="color: #1e40af; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.3em;">🧠</span>
+                        Strategy Agent Results - Intervention Specifications
+                    </h3>
+                    <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: 700; color: #1e40af; margin-bottom: 10px; font-size: 1.1em;">
+                                📋 Therapeutic Framework
+                            </div>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span class="tag ${strategyData.therapeutic_context.framework.toLowerCase()}">${strategyData.therapeutic_context.framework}</span>
+                                ${strategyData.therapeutic_context.techniques.map(t => `<span class="tag">${t.replace('_', ' ')}</span>`).join('')}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 3px solid #10b981;">
+                            <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">🎯 Clinical Rationale:</div>
+                            <div style="color: #047857; line-height: 1.6;">
+                                ${strategyData.therapeutic_context.clinical_rationale}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; padding: 15px; background: #faf5ff; border-radius: 8px; border-left: 3px solid #a855f7;">
+                            <div style="font-weight: 600; color: #6b21a8; margin-bottom: 8px;">🎨 Content Theme:</div>
+                            <div style="color: #581c87;">
+                                <strong>${strategyData.intervention_spec.content_theme.replace('_', ' ').toUpperCase()}</strong> - 
+                                Target emotion: <span class="tag">${strategyData.intervention_spec.target_emotion}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                            <div style="font-weight: 600; color: #92400e; margin-bottom: 8px;">💡 Therapeutic Intent:</div>
+                            <div style="color: #78350f; line-height: 1.6; font-size: 0.95em;">
+                                ${strategyData.intervention_spec.therapeutic_intent}
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                            <button onclick="generateDemoVideo('${topic.name}', ${JSON.stringify(strategyData).replace(/'/g, "&#39;")})" 
+                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 18px 40px; border-radius: 50px; font-weight: 700; font-size: 1.2em; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 1.3em;">🎬</span>
+                                <span>Generate Therapeutic Video</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+            
+            reasonsSection.innerHTML = `
+                <h2>${topic.icon} ${topic.name} - Analysis Complete</h2>
+                <p style="color: #666; margin-bottom: 25px;">Strategy Agent has generated intervention specifications. Click "Generate Video" below or select a specific reason.</p>
+                
+                ${strategyHTML}
+                
+                <h3 style="color: #333; margin-bottom: 15px; font-size: 1.5em;">Top 5 Specific Reasons</h3>
+                <p style="color: #666; margin-bottom: 20px;">Click any reason below to generate a therapeutic video intervention</p>
+                
+                <div class="trending-grid">
+                    ${reasons.map((reason, index) => `
+                        <div class="trending-topic-card" style="animation-delay: ${index * 0.1}s" onclick='generateVideoForReason(${JSON.stringify({...reason, topic: topic.name, topic_icon: topic.icon, strategyData: strategyData}).replace(/'/g, "&#39;")})'>
+                            <div class="topic-header">
+                                <div class="topic-icon">${index + 1}️⃣</div>
+                                <div class="topic-info">
+                                    <div class="topic-name">${reason.title}</div>
+                                    <div class="topic-volume">${reason.mentions.toLocaleString()} mentions</div>
+                                </div>
+                            </div>
+                            <div style="color: #666; margin: 15px 0; line-height: 1.6;">
+                                ${reason.description}
+                            </div>
+                            <div class="severity-indicator">
+                                <div class="severity-badge ${reason.severity >= 75 ? 'high' : reason.severity >= 60 ? 'medium' : 'low'}">
+                                    ${reason.severity}% Severity
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            reasonsSection.style.display = 'block';
+            reasonsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateVideoForReason(reason) {
+            console.log('Generating video for reason:', reason);
+            
+            // Show confirmation
+            const confirmed = confirm(`Generate "Mindful Moment" video for:\n\n${reason.topic_icon} ${reason.title}\n\n${reason.description}\n\nThis will use Strategy and Generation agents. Continue?`);
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            // Start pipeline animation
+            resetPipeline();
+            animatePipeline();
+            
+            // Trigger video generation
+            const sample = {
+                name: reason.topic_icon + ' ' + reason.title,
+                community: reason.topic,
+                icon: reason.topic_icon,
+                description: reason.description
+            };
+            runSample(sample);
+        }
+
+        function generateDemoVideo(topicName, strategyData) {
+            console.log('Generating demo video for:', topicName);
+            
+            // Hide reasons section
+            const reasonsSection = document.getElementById('reasonsSection');
+            if (reasonsSection) {
+                reasonsSection.style.display = 'none';
+            }
+            
+            // Show video player with generating overlay
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = document.getElementById('videoElement');
+            const videoSource = document.getElementById('videoSource');
+            const generatingOverlay = document.getElementById('generatingOverlay');
+            const videoDuration = document.getElementById('videoDuration');
+            
+            // Set video source to anxiety demo video
+            videoSource.src = '/demo-videos/anxiety-vid.mp4';
+            videoElement.load();
+            
+            // Show video player
+            videoPlayer.classList.add('show');
+            videoPlayer.scrollIntoView({ behavior: 'smooth' });
+            
+            // Show generating animation
+            generatingOverlay.classList.remove('hidden');
+            
+            // Animate pipeline
+            resetPipeline();
+            updatePipelineProgress('monitor', 100);
+            setTimeout(() => updatePipelineProgress('strategy', 100), 500);
+            setTimeout(() => updatePipelineProgress('generation', 30), 1000);
+            setTimeout(() => updatePipelineProgress('generation', 60), 2000);
+            setTimeout(() => updatePipelineProgress('generation', 100), 3000);
+            
+            // Hide animation after 3 seconds and auto-play video
+            setTimeout(() => {
+                generatingOverlay.classList.add('hidden');
+                videoElement.play().catch(e => {
+                    console.log('Autoplay prevented:', e);
+                });
+            }, 3500);
+            
+            // Update video info
+            videoDuration.textContent = '30';
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        function showResults(data, success = true) {
+            hideLoading();
+            const results = document.getElementById('results');
+            const badge = document.getElementById('resultBadge');
+            const content = document.getElementById('resultsContent');
+            
+            badge.className = success ? 'success-badge' : 'error-badge';
+            badge.textContent = success ? '✓ Success' : '✗ Error';
+            
+            content.innerHTML = formatResults(data);
+            results.classList.add('show');
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatResults(data) {
+            if (!data.success) {
+                return `<div class="result-section">
+                    <h3>Error</h3>
+                    <div class="result-value">${data.error}</div>
+                </div>`;
+            }
+
+            let html = '';
+
+            // Cycle ID
+            html += `<div class="result-section">
+                <h3>Cycle Information</h3>
+                <div class="result-item">
+                    <div class="result-label">Cycle ID</div>
+                    <div class="result-value">${data.cycle_id}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Trace Logs</div>
+                    <div class="result-value">${data.trace_count} entries</div>
+                </div>
+            </div>`;
+
+            // Monitor output
+            if (data.signal) {
+                const severityPercent = (data.signal.severity_indicator * 100).toFixed(0);
+                const signalEmoji = {
+                    'anxiety': '😰',
+                    'burnout': '😫',
+                    'isolation': '😔',
+                    'depression': '😢',
+                    'general_stress': '😟'
+                }[data.signal.signal_type] || '😟';
+
+                html += `<div class="result-section">
+                    <h3><span class="emoji-icon">🔍</span> What We Found</h3>
+                    <div class="signal-card">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="font-size: 3em;">${signalEmoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 5px;">
+                                    ${data.signal.signal_type.charAt(0).toUpperCase() + data.signal.signal_type.slice(1)} Signal Detected
+                                </div>
+                                <div style="color: #666; font-size: 0.95em;">
+                                    From ${data.signal.community_context}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: 600; color: #555;">Intensity Level</span>
+                                <span style="font-weight: 700; color: #667eea;">${severityPercent}%</span>
+                            </div>
+                            <div class="severity-bar">
+                                <div class="severity-fill" style="width: ${severityPercent}%"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+                            <div style="font-weight: 600; color: #555; margin-bottom: 8px;">What people are saying:</div>
+                            <div style="color: #666; font-style: italic; line-height: 1.6;">
+                                "${data.signal.raw_content.substring(0, 150)}${data.signal.raw_content.length > 150 ? '...' : ''}"
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Strategy output
+            if (data.therapeutic_context) {
+                html += `<div class="result-section">
+                    <h3><span class="emoji-icon">🧠</span> Clinical Analysis</h3>
+                    <div class="signal-card">
+                        <div style="margin-bottom: 15px;">
+                            <span class="tag ${data.therapeutic_context.framework.toLowerCase()}">${data.therapeutic_context.framework}</span>
+                            ${data.therapeutic_context.techniques.map(t => `<span class="tag">${t.replace('_', ' ')}</span>`).join('')}
+                        </div>
+                        <div style="color: #666; line-height: 1.6;">
+                            ${data.therapeutic_context.clinical_rationale}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (data.intervention_spec) {
+                const themeEmoji = {
+                    'grounding': '🌳',
+                    'self_compassion': '💝',
+                    'mindfulness': '🧘',
+                    'empowerment': '💪',
+                    'relaxation': '🌊'
+                }[data.intervention_spec.content_theme] || '✨';
+
+                html += `<div class="result-section">
+                    <h3><span class="emoji-icon">💡</span> Recommended Intervention</h3>
+                    <div class="signal-card">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="font-size: 3em;">${themeEmoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px;">
+                                    ${data.intervention_spec.content_theme.replace('_', ' ').charAt(0).toUpperCase() + data.intervention_spec.content_theme.replace('_', ' ').slice(1)} Approach
+                                </div>
+                                <div>
+                                    <span class="tag ${data.intervention_spec.therapeutic_framework.toLowerCase()}">${data.intervention_spec.therapeutic_framework}</span>
+                                    <span class="tag">${data.intervention_spec.target_emotion}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="font-weight: 600; color: #555; margin-bottom: 8px;">🎨 Visual Style:</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                ${data.intervention_spec.visual_guidelines}
+                            </div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+                            <div style="font-weight: 600; color: #555; margin-bottom: 8px;">📝 Message Approach:</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                ${data.intervention_spec.text_guidelines}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Pipeline output
+            if (data.monitor_output && data.strategy_output) {
+                const severityPercent = (data.monitor_output.severity * 100).toFixed(0);
+                const signalEmoji = {
+                    'anxiety': '😰',
+                    'burnout': '😫',
+                    'isolation': '😔',
+                    'depression': '😢',
+                    'general_stress': '😟'
+                }[data.monitor_output.signal_type] || '😟';
+
+                const themeEmoji = {
+                    'grounding': '🌳',
+                    'self_compassion': '💝',
+                    'mindfulness': '🧘',
+                    'empowerment': '💪',
+                    'relaxation': '🌊'
+                }[data.strategy_output.content_theme] || '✨';
+
+                html += `<div class="result-section">
+                    <h3><span class="emoji-icon">🔍</span> What We Found</h3>
+                    <div class="signal-card">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="font-size: 3em;">${signalEmoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 5px;">
+                                    ${data.monitor_output.signal_type.charAt(0).toUpperCase() + data.monitor_output.signal_type.slice(1)} Signal Detected
+                                </div>
+                                <div style="color: #666;">From ${data.monitor_output.community}</div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: 600; color: #555;">Intensity Level</span>
+                                <span style="font-weight: 700; color: #667eea;">${severityPercent}%</span>
+                            </div>
+                            <div class="severity-bar">
+                                <div class="severity-fill" style="width: ${severityPercent}%"></div>
+                            </div>
+                        </div>
+                        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 15px;">
+                            <div style="font-weight: 700; color: #92400e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2em;">💬</span>
+                                <span>What People Are Actually Saying:</span>
+                            </div>
+                            <div style="color: #78350f; font-style: italic; line-height: 1.7; background: white; padding: 12px; border-radius: 6px;">
+                                "${data.monitor_output.raw_content}"
+                            </div>
+                        </div>
+                        <div style="background: #dbeafe; padding: 12px 15px; border-radius: 8px; display: flex; align-items: start; gap: 10px;">
+                            <span style="font-size: 1.3em;">ℹ️</span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #1e40af; margin-bottom: 4px;">Key Indicators:</div>
+                                <div style="color: #1e3a8a; font-size: 0.95em;">
+                                    ${severityPercent >= 80 ? '⚠️ High severity language' : severityPercent >= 60 ? '⚡ Moderate stress' : '📊 Mild stress'} • 
+                                    ${data.monitor_output.signal_type === 'anxiety' ? 'Panic, worry, racing thoughts' : 
+                                        data.monitor_output.signal_type === 'burnout' ? 'Exhaustion, overwhelm' :
+                                        data.monitor_output.signal_type === 'isolation' ? 'Loneliness, disconnection' :
+                                        data.monitor_output.signal_type === 'depression' ? 'Hopelessness, low motivation' :
+                                        'General stress'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3><span class="emoji-icon">💡</span> Our Recommended Response</h3>
+                    <div class="signal-card">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="font-size: 3em;">${themeEmoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px;">
+                                    ${data.strategy_output.content_theme.replace('_', ' ').charAt(0).toUpperCase() + data.strategy_output.content_theme.replace('_', ' ').slice(1)} Approach
+                                </div>
+                                <div>
+                                    <span class="tag ${data.strategy_output.framework.toLowerCase()}">${data.strategy_output.framework}</span>
+                                    <span class="tag">${data.strategy_output.target_emotion}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ${data.strategy_output.techniques ? `<div style="margin-bottom: 15px; background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 3px solid #10b981;">
+                            <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">🎯 Therapeutic Techniques:</div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                ${data.strategy_output.techniques.map(t => `<span style="background: white; padding: 6px 12px; border-radius: 6px; color: #065f46; font-size: 0.9em; border: 1px solid #86efac;">${t.replace('_', ' ')}</span>`).join('')}
+                            </div>
+                        </div>` : ''}
+                        ${data.strategy_output.clinical_rationale ? `<div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #3b82f6;">
+                            <div style="font-weight: 600; color: #1e40af; margin-bottom: 8px;">🏥 Why This Works:</div>
+                            <div style="color: #1e3a8a; line-height: 1.6;">
+                                ${data.strategy_output.clinical_rationale}
+                            </div>
+                        </div>` : ''}
+                        <div style="background: #faf5ff; padding: 15px; border-radius: 8px; border-left: 3px solid #a855f7;">
+                            <div style="font-weight: 600; color: #6b21a8; margin-bottom: 8px;">🎨 The "Mindful Moment" Video Will Feature:</div>
+                            <div style="color: #581c87; line-height: 1.6;">
+                                ${data.strategy_output.visual_guidelines}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Trace logs - make it collapsible and less prominent
+            if (data.traces && data.traces.length > 0) {
+                html += `<div class="result-section" style="border-left-color: #9ca3af;">
+                    <details>
+                        <summary style="cursor: pointer; font-weight: 600; color: #6b7280; margin-bottom: 10px;">
+                            📝 Technical Logs (${data.traces.length} entries)
+                        </summary>
+                        <div class="trace-log">
+                            ${data.traces.map(trace => `
+                                <div class="trace-entry">
+                                    <strong>${trace.agent}</strong> → ${trace.action} 
+                                    [${trace.status}] @ ${new Date(trace.timestamp).toLocaleTimeString()}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
+                </div>`;
+            }
+
+            return html;
+        }
+
+        async function runPipelineWithData(url, content) {
+            try {
+                const response = await fetch('/api/run/pipeline', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, content })
+                });
+                
+                const data = await response.json();
+                showResults(data, data.success);
+            } catch (error) {
+                showResults({ success: false, error: error.message }, false);
+            }
+        }
+
+        // Make functions globally accessible
+        window.startMonitoring = startMonitoring;
+        window.selectTopic = selectTopic;
+        window.displayReasons = displayReasons;
+        window.generateVideoForReason = generateVideoForReason;
+        window.generateDemoVideo = generateDemoVideo;
+        window.runSample = runSample;
+
+        // Initialize
+        loadAgents();
+        loadSamples();
+    </script>
+</body>
+</html>

@@ -63,7 +63,7 @@ All coordinated by a **Manager Agent** that handles orchestration, error recover
   - Freepik (image generation)
   - ElevenLabs (voice synthesis)
   - Modulate (emotional validation)
-  - Yutori (knowledge base & memory)
+  - Yutori (knowledge base & memory) ✅ **Configured!**
   - Retool (optional: human oversight dashboard)
 
 ### Installation
@@ -88,8 +88,31 @@ All coordinated by a **Manager Agent** that handles orchestration, error recover
 4. **Configure environment**
    ```bash
    cp .env.example .env
-   # Edit .env with your API keys
+   # Edit .env with your API keys (Yutori key already configured!)
    ```
+
+### 🎨 Web Dashboard (Recommended!)
+
+The easiest way to test the agents is through the interactive web dashboard:
+
+```bash
+# Start the dashboard
+./start_dashboard.sh
+
+# Or manually:
+source .venv/bin/activate
+PYTHONPATH=. python dashboard.py
+```
+
+Then open your browser to: **http://localhost:5001**
+
+The dashboard provides:
+- 🎯 Interactive agent testing with one-click samples
+- 📊 Real-time results visualization
+- 📝 Complete trace log viewing
+- 🧪 Test individual agents or the complete pipeline
+
+See [DASHBOARD_README.md](DASHBOARD_README.md) for detailed dashboard documentation.
 
 ### Configuration
 
@@ -121,7 +144,24 @@ VIDEO_DURATION_MAX=60
 
 ## 📖 Usage
 
-### Basic Example
+### Web Dashboard (Recommended)
+
+The interactive web dashboard is the easiest way to test agents:
+
+```bash
+./start_dashboard.sh
+# Open http://localhost:5001 in your browser
+```
+
+Features:
+- Click-to-test agent interface
+- Pre-loaded sample stress signals
+- Real-time results display
+- Complete trace log viewing
+
+### Command Line Usage
+
+#### Basic Example
 
 ```python
 from src.agents.manager import ManagerAgent
@@ -142,10 +182,17 @@ result = manager.execute_cycle()
 print(f"Cycle result: {result.value}")
 ```
 
-### Run Demo
+### Run Demos
 
 ```bash
+# Demo Manager Agent
 python examples/demo_manager.py
+
+# Demo Monitor and Strategy Agents
+PYTHONPATH=. python examples/demo_monitor_strategy.py
+
+# Web Dashboard (Interactive)
+./start_dashboard.sh
 ```
 
 ## 🧪 Testing
@@ -172,9 +219,19 @@ pytest tests/test_manager_agent.py -v
   - Error handling with retry logic and circuit breaker
   - Complete trace logging system
   - Comprehensive unit tests
+- **Task 3**: Monitor and Strategy Agents
+  - **Task 3.1**: MonitorAgent with TinyFish MCP integration
+    - Stress signal extraction and classification
+    - Severity calculation and community context extraction
+    - Full trace logging integration
+  - **Task 3.2**: StrategyAgent with Yutori knowledge base integration
+    - Therapeutic framework mapping (CBT/DBT)
+    - Intervention specification generation
+    - Content guidelines creation
+  - 13 unit and integration tests, all passing
+  - Demo script and comprehensive documentation
 
 ### 🚧 In Progress
-- **Task 3**: Monitor and Strategy Agents
 - **Task 4**: Generation Agent (video composition)
 - **Task 5**: Audit Agent (quality validation)
 - **Task 6**: Memory Agent and end-to-end integration
@@ -186,6 +243,8 @@ Eirene/
 ├── src/
 │   ├── agents/          # Agent implementations
 │   │   ├── manager.py   # Manager Agent (orchestration)
+│   │   ├── monitor.py   # Monitor Agent (stress signal detection)
+│   │   ├── strategy.py  # Strategy Agent (therapeutic mapping)
 │   │   └── __init__.py
 │   ├── models/          # Data models
 │   │   ├── audit.py
@@ -197,11 +256,14 @@ Eirene/
 │   └── utils/           # Utilities
 │       └── trace_logger.py
 ├── tests/               # Test suite
-│   └── test_manager_agent.py
+│   ├── test_manager_agent.py
+│   └── test_monitor_strategy_agents.py
 ├── examples/            # Example scripts
-│   └── demo_manager.py
+│   ├── demo_manager.py
+│   └── demo_monitor_strategy.py
 ├── docs/                # Documentation
-│   └── manager_agent.md
+│   ├── manager_agent.md
+│   └── monitor_strategy_agents.md
 ├── traces/              # Execution traces (gitignored)
 ├── .env.example         # Example environment config
 ├── requirements.txt     # Python dependencies

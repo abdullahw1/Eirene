@@ -12,6 +12,7 @@ class SystemConfig:
     
     # API Keys
     agentql_api_key: str
+    tinyfish_api_key: str
     freepik_api_key: str
     elevenlabs_api_key: str
     modulate_api_key: str
@@ -40,6 +41,7 @@ class SystemConfig:
         return cls(
             # API Keys
             agentql_api_key=os.getenv("AGENTQL_API_KEY", ""),
+            tinyfish_api_key=os.getenv("TINYFISH_API_KEY", ""),
             freepik_api_key=os.getenv("FREEPIK_API_KEY", ""),
             elevenlabs_api_key=os.getenv("ELEVENLABS_API_KEY", ""),
             modulate_api_key=os.getenv("MODULATE_API_KEY", ""),
