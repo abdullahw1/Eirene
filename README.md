@@ -59,9 +59,11 @@ All coordinated by a **Manager Agent** that handles orchestration, error recover
 
 - Python 3.10+
 - API keys for:
-  - AgentQL (web scraping)
-  - Freepik (image generation)
+  - TinyFish/Mino (web scraping via AgentQL)
+  - Freepik (image & video generation with Kling API)
   - ElevenLabs (voice synthesis)
+  - OpenAI (DALL-E for images, GPT for scripts)
+  - Anthropic (optional: Claude for script generation)
   - Modulate (emotional validation)
   - Yutori (knowledge base & memory) ✅ **Configured!**
   - Retool (optional: human oversight dashboard)
@@ -123,9 +125,11 @@ Create a `.env` file with the following variables:
 AGENTQL_API_KEY=your_key_here
 FREEPIK_API_KEY=your_key_here
 ELEVENLABS_API_KEY=your_key_here
+OPENAI_API_KEY=your_key_here
+ANTHROPIC_API_KEY=your_key_here
 MODULATE_API_KEY=your_key_here
 YUTORI_API_KEY=your_key_here
-YUTORI_BASE_URL=https://api.yutori.ai
+YUTORI_BASE_URL=https://api.yutori.com
 
 # Optional: Human-in-the-loop
 RETOOL_API_KEY=your_key_here
@@ -191,7 +195,13 @@ python examples/demo_manager.py
 # Demo Monitor and Strategy Agents
 PYTHONPATH=. python examples/demo_monitor_strategy.py
 
-# Web Dashboard (Interactive)
+# Demo Generation Agent (video creation)
+PYTHONPATH=. python examples/demo_generation.py
+
+# Demo Complete Pipeline
+PYTHONPATH=. python examples/demo_strategy_to_generation.py
+
+# Web Dashboard (Interactive - Recommended!)
 ./start_dashboard.sh
 ```
 
@@ -214,27 +224,41 @@ pytest tests/test_manager_agent.py -v
 
 ### ✅ Completed
 - **Task 1**: Project foundation and core data models
-- **Task 2.1**: Manager Agent with pipeline orchestration
+- **Task 2**: Manager Agent with pipeline orchestration
   - Pipeline initialization and coordination
   - Error handling with retry logic and circuit breaker
   - Complete trace logging system
   - Comprehensive unit tests
 - **Task 3**: Monitor and Strategy Agents
-  - **Task 3.1**: MonitorAgent with TinyFish MCP integration
+  - **MonitorAgent** with TinyFish/Mino integration
+    - Real-time web scraping of Reddit communities
     - Stress signal extraction and classification
-    - Severity calculation and community context extraction
-    - Full trace logging integration
-  - **Task 3.2**: StrategyAgent with Yutori knowledge base integration
+    - Severity calculation and community context
+    - Live search toggle + curated demo data
+  - **StrategyAgent** with Yutori knowledge base integration
     - Therapeutic framework mapping (CBT/DBT)
     - Intervention specification generation
-    - Content guidelines creation
-  - 13 unit and integration tests, all passing
-  - Demo script and comprehensive documentation
+    - Content guidelines for visuals and audio
+    - Voice parameter optimization
+  - Full trace logging and comprehensive tests
+- **Task 4**: Generation Agent (video composition)
+  - **Visual Generation**: DALL-E 3 for therapeutic images (with Unsplash fallback)
+  - **Script Generation**: OpenAI/Anthropic for therapeutic voiceover scripts
+  - **Audio Generation**: ElevenLabs voice synthesis with emotional parameters
+  - **Video Composition**: FFmpeg combining visuals + audio
+  - **Freepik Kling Integration**: Animated video generation (optional)
+  - Style parameters and self-improvement from historical data
+- **Task 5**: Interactive Web Dashboard
+  - Real-time agent testing interface
+  - Pre-loaded stress signal scenarios
+  - Live search toggle for TinyFish
+  - Results visualization and trace viewing
+  - Video playback with controls
 
 ### 🚧 In Progress
-- **Task 4**: Generation Agent (video composition)
-- **Task 5**: Audit Agent (quality validation)
-- **Task 6**: Memory Agent and end-to-end integration
+- **Task 6**: Audit Agent (quality validation with Modulate API)
+- **Task 7**: Memory Agent (outcome storage and learning)
+- **Task 8**: End-to-end integration and testing
 
 ## 📁 Project Structure
 
@@ -244,7 +268,9 @@ Eirene/
 │   ├── agents/          # Agent implementations
 │   │   ├── manager.py   # Manager Agent (orchestration)
 │   │   ├── monitor.py   # Monitor Agent (stress signal detection)
+│   │   ├── monitor_enhanced.py  # Enhanced with live TinyFish
 │   │   ├── strategy.py  # Strategy Agent (therapeutic mapping)
+│   │   ├── generation.py # Generation Agent (video creation)
 │   │   └── __init__.py
 │   ├── models/          # Data models
 │   │   ├── audit.py
@@ -257,13 +283,28 @@ Eirene/
 │       └── trace_logger.py
 ├── tests/               # Test suite
 │   ├── test_manager_agent.py
-│   └── test_monitor_strategy_agents.py
+│   ├── test_monitor_strategy_agents.py
+│   ├── test_generation_agent.py
+│   ├── test_generation_integration.py
+│   └── test_strategy_enhanced.py
 ├── examples/            # Example scripts
 │   ├── demo_manager.py
-│   └── demo_monitor_strategy.py
+│   ├── demo_monitor_strategy.py
+│   ├── demo_generation.py
+│   └── demo_strategy_to_generation.py
 ├── docs/                # Documentation
 │   ├── manager_agent.md
-│   └── monitor_strategy_agents.md
+│   ├── monitor_strategy_agents.md
+│   ├── generation_agent.md
+│   ├── strategy_agent_enhancements.md
+│   └── freepik_kling_api.md
+├── templates/           # Web dashboard
+│   └── dashboard.html
+├── dashboard.py         # Dashboard server
+├── generated_content/   # Output directory
+│   ├── images/
+│   ├── audio/
+│   └── videos/
 ├── traces/              # Execution traces (gitignored)
 ├── .env.example         # Example environment config
 ├── requirements.txt     # Python dependencies
@@ -309,7 +350,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgments
 
 - Built for [Hackathon Name]
-- Powered by AgentQL, Freepik, ElevenLabs, Modulate, and Yutori APIs
+- Powered by:
+  - **TinyFish/Mino** - AI web scraping and automation
+  - **Yutori** - AI research and knowledge base
+  - **Freepik (Kling API)** - Image and video generation
+  - **ElevenLabs** - Voice synthesis
+  - **OpenAI** - DALL-E 3 images and GPT for scripts
+  - **Modulate** - Emotional AI validation
+  - **Retool** - Human oversight dashboard
 - Inspired by the need for accessible mental health interventions
 
 ## 📞 Contact
