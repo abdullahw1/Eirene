@@ -6,11 +6,9 @@ Freepik provides the Kling 2.6 Pro API for AI-powered text-to-video and image-to
 
 ## API Key
 
-```
-FPSX6f9b2cdc409e46e9bcc303aa80a25ae3
-```
+Get your API key from [Freepik API Dashboard](https://www.freepik.com/api)
 
-Stored in `.env` as `FREEPIK_API_KEY`
+Store in `.env` as `FREEPIK_API_KEY=your_key_here`
 
 ## Endpoints
 
@@ -21,7 +19,7 @@ Stored in `.env` as `FREEPIK_API_KEY`
 **Headers:**
 ```
 Content-Type: application/json
-x-freepik-api-key: FPSX6f9b2cdc409e46e9bcc303aa80a25ae3
+x-freepik-api-key: your_api_key_here
 ```
 
 **Request Body:**
@@ -42,7 +40,7 @@ x-freepik-api-key: FPSX6f9b2cdc409e46e9bcc303aa80a25ae3
 curl --request POST \
   --url https://api.freepik.com/v1/ai/image-to-video/kling-v2-6-pro \
   --header 'Content-Type: application/json' \
-  --header 'x-freepik-api-key: FPSX6f9b2cdc409e46e9bcc303aa80a25ae3' \
+  --header 'x-freepik-api-key: your_api_key_here' \
   --data '{
     "prompt": "Gentle waves flowing on a peaceful beach at sunset",
     "duration": "5",
@@ -67,14 +65,14 @@ curl --request POST \
 
 **Headers:**
 ```
-x-freepik-api-key: FPSX6f9b2cdc409e46e9bcc303aa80a25ae3
+x-freepik-api-key: your_api_key_here
 ```
 
 **Example cURL:**
 ```bash
 curl --request GET \
   --url https://api.freepik.com/v1/ai/image-to-video/kling-v2-6 \
-  --header 'x-freepik-api-key: FPSX6f9b2cdc409e46e9bcc303aa80a25ae3'
+  --header 'x-freepik-api-key: your_api_key_here'
 ```
 
 **Response:**

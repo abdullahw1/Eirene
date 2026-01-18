@@ -55,6 +55,8 @@ All coordinated by a **Manager Agent** that handles orchestration, error recover
 
 ## 🚀 Getting Started
 
+> **Quick Start**: See [QUICKSTART.md](QUICKSTART.md) for a 5-minute setup guide!
+
 ### Prerequisites
 
 - Python 3.10+
@@ -220,6 +222,12 @@ pytest --cov=src --cov-report=html
 pytest tests/test_manager_agent.py -v
 ```
 
+## 📚 Additional Documentation
+
+- **[Development Guides](.guides/README.md)** - Setup guides, demo scripts, and status updates
+- **[Scripts & Utilities](scripts/README.md)** - Test scripts and deployment tools
+- **[Technical Docs](docs/)** - Detailed agent documentation and API guides
+
 ## 📊 Current Implementation Status
 
 ### ✅ Completed
@@ -264,51 +272,49 @@ pytest tests/test_manager_agent.py -v
 
 ```
 Eirene/
-├── src/
+├── src/                 # Core application code
 │   ├── agents/          # Agent implementations
 │   │   ├── manager.py   # Manager Agent (orchestration)
 │   │   ├── monitor.py   # Monitor Agent (stress signal detection)
 │   │   ├── monitor_enhanced.py  # Enhanced with live TinyFish
 │   │   ├── strategy.py  # Strategy Agent (therapeutic mapping)
-│   │   ├── generation.py # Generation Agent (video creation)
-│   │   └── __init__.py
+│   │   └── generation.py # Generation Agent (video creation)
 │   ├── models/          # Data models
-│   │   ├── audit.py
-│   │   ├── config.py
-│   │   ├── intervention.py
-│   │   ├── memory.py
-│   │   ├── pipeline.py
-│   │   └── stress_signal.py
-│   └── utils/           # Utilities
-│       └── trace_logger.py
+│   │   ├── config.py, intervention.py, pipeline.py, etc.
+│   └── utils/           # Utilities (trace_logger.py)
 ├── tests/               # Test suite
 │   ├── test_manager_agent.py
 │   ├── test_monitor_strategy_agents.py
 │   ├── test_generation_agent.py
-│   ├── test_generation_integration.py
-│   └── test_strategy_enhanced.py
-├── examples/            # Example scripts
+│   └── test_generation_integration.py
+├── examples/            # Demo scripts
 │   ├── demo_manager.py
 │   ├── demo_monitor_strategy.py
 │   ├── demo_generation.py
 │   └── demo_strategy_to_generation.py
-├── docs/                # Documentation
+├── docs/                # Technical documentation
 │   ├── manager_agent.md
-│   ├── monitor_strategy_agents.md
 │   ├── generation_agent.md
-│   ├── strategy_agent_enhancements.md
 │   └── freepik_kling_api.md
-├── templates/           # Web dashboard
+├── scripts/             # Utility scripts
+│   ├── test_yutori.py
+│   ├── test_freepik_kling.py
+│   ├── generate_demo_video.py
+│   └── push_to_github.sh
+├── .guides/             # Development guides (see .guides/README.md)
+│   ├── HOW_TO_USE.md
+│   ├── DEMO_PERFECT.md
+│   └── DASHBOARD_README.md
+├── templates/           # Web dashboard templates
 │   └── dashboard.html
 ├── dashboard.py         # Dashboard server
-├── generated_content/   # Output directory
-│   ├── images/
-│   ├── audio/
-│   └── videos/
+├── start_dashboard.sh   # Dashboard launcher
+├── generated_content/   # Output directory (gitignored)
+│   ├── images/, audio/, videos/
 ├── traces/              # Execution traces (gitignored)
 ├── .env.example         # Example environment config
 ├── requirements.txt     # Python dependencies
-└── README.md
+└── README.md            # This file
 ```
 
 ## 🔍 Observability
